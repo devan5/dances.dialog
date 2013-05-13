@@ -1,0 +1,119 @@
+.dsDialog {
+	padding: 5px;
+
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = 'true', startColorstr = '#72F5F5F5', endColorstr = '#72F5F5F5') \9;
+	background: transparent !important;
+	background: rgba(245, 245, 245, 0.45) !important;
+}
+:root .dsDialog {
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType = 0, StartColorStr = '#00000000', EndColorStr = '#00000000');
+}
+
+.dsDialog-inner {
+	background-color: #fff;
+	border: 1px solid #BBB;
+	overflow: hidden;
+}
+
+.dsDialog-hdr {
+	background-color: #F2F2F2;
+	line-height: 30px;
+	padding: 0 40px 0 0;
+}
+
+.dsDialog-tie {
+	text-indent: 10px;
+	font-weight: bold;
+}
+
+.dsDialog-close {
+	background: url(../imgs/dancesDialog/def/bg_close_btn.gif) no-repeat;
+	line-height: 20px;
+	right: 5px;
+	color: #fff;
+	font-weight: bold;
+	width: 20px;
+	text-align: center;
+	height: 20px;
+	text-shadow: 1px 1px #666;
+	margin: -10px 0 0;
+	font-size: 16px;
+	cursor: pointer;
+}
+.dsDialog-close:hover{
+	background-position: 0 -20px;
+}
+
+.dsDialog-con {
+	padding: 5px;
+}
+
+.dsDialog-ftr {
+	text-align: right;
+	bottom: 0;
+	left: 0;
+	padding: 5px;
+}
+/*_______
+	区域: dialog Main
+	时间: 2013.01.23
+*/
+
+.dsDialog-btn {
+	cursor: pointer;
+	font-size: 12px;
+	height: 25px;
+	min-width: 60px;
+	*width: auto;
+	_width: 60px;
+	*overflow: visible;
+	_overflow: inherit;
+	_overflow-x: visible;
+	padding: 0 3px;
+	line-height: 25px;
+	text-align: center;
+	border-radius: 2px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #B8B8B8 #939393 #939393 #B8B8B8;
+	margin: 0 5px;
+
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #eeeeee));
+	background: -webkit-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background: -o-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	background: linear-gradient(top, #ffffff 0%, #eeeeee 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#eeeeee', GradientType = 0);
+}
+
+/* 偷懒ing__"确认"和"取消"按钮目前用同样的css */
+.dsDialog-btn-confirm {
+
+}
+
+.dsDialog-btn-cancel {
+
+}
+.dsDialog-btn-disable {
+	color: #ccc;
+	cursor: default;
+	background: #f5f5f5;
+	background: -moz-linear-gradient(top, #f5f5f5 6%, #f5f5f5 87%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(6%,#f5f5f5), color-stop(87%,#f5f5f5));
+	background: -webkit-linear-gradient(top, #f5f5f5 6%,#f5f5f5 87%);
+	background: -o-linear-gradient(top, #f5f5f5 6%,#f5f5f5 87%);
+	background: -ms-linear-gradient(top, #f5f5f5 6%,#f5f5f5 87%);
+	background: linear-gradient(top, #f5f5f5 6%,#f5f5f5 87%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#f5f5f5',GradientType=0 );
+}
+
+/**/
+.dsDialog-inputText {
+	font-size: 12px;
+	height: 20px;
+	line-height: 19px;
+	text-indent: 5px;
+	width: 130px;
+}

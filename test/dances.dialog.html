@@ -1,0 +1,799 @@
+﻿<!DOCTYPE HTML>
+<html lang="ru-RU">
+<head>
+	<title>.dialog</title>
+	<meta charset="UTF-8">
+
+	<link rel="stylesheet" type="text/css" href="../css/base.v10.final.min.css" media="all">
+	<style type="text/css">
+		body{
+			padding: 10px;
+			Height: 3000px;
+
+		}
+		.d-wrap01{
+			position: fixed;
+			top:0;
+			background: #fff;
+			box-shadow: 3px 3px 10px #CCCCCC;
+			padding: 0.5em;
+		}
+		.boxAio-item{
+			display: inline-block;
+			*display: inline;
+			*zoom:1;
+			width: 15em;
+			margin: 3px 0;
+			overflow: hidden;
+		}
+		.boxAio-item span{
+			height: 19px;
+			overflow: hidden;
+			vertical-align: middle;
+			width: 8em;
+			white-space: normal;
+			word-break: break-all;
+
+		}
+		.d-wrap01-group{
+			display: inline-block;
+			*display: inline;
+			*zoom:1;
+			overflow: hidden;
+			width: 15em;
+			vertical-align: top;
+			border-top: 1px solid #ccc;
+			padding: 0 0 1.5em 0;
+
+		}
+	</style>
+
+	<!--<link rel="stylesheet" type="text/css" href="../css/dances.dialog-base.css" media="all">-->
+
+	<!--<link rel="stylesheet" type="text/css" href="../css/dances.dialog-classical.css" media="all">-->
+	<!--<link rel="stylesheet" type="text/css" href="../css/dances.dialog-blue.css" media="all">-->
+	<!--<link rel="stylesheet" type="text/css" href="../css/dances.dialog-darkBlue.css" media="all">-->
+	<!--<link rel="stylesheet" type="text/css" href="../css/dances.dialog-plain.css" media="all">-->
+	<link rel="stylesheet" type="text/css" href="../css/dances.dialog-classicalExtend.css" media="all">
+
+	<script type="text/javascript" src="../../../dances.amd/dances.amd.js"></script>
+
+	<!--[if lt IE 9]>
+		<script type="text/javascript" src="../lib/html5_v3.5.js"></script>
+	<![endif]-->
+
+	<script type="text/javascript"> function dynWrite(str, num){ document.write(new Array((isNaN(parseInt(num, 10)) ? 0 : num) + 1).join(str)); } </script>
+
+</head>
+<body class="fs12">
+
+	<div class="d-wrap01"></div>
+
+	<script type="text/javascript">
+
+		define.amd.jQuery = true;
+		define.amd.dancesDom = true;
+		define.amd.dancesJs = true;
+		define.amd.dancesUmask = true;
+		define.amd.dancesDialog = true;
+
+		require.conf("paths", {
+			js    : "../../../dances.javascript/dances.javascript",
+			dom   : "../../../dances.dom/dances.dom",
+			jQ17  : "../lib/jquery-1.7.2.min",
+			uMask : "../../dances.uMask/dances.uMask",
+			dialog: "../dances.dialog"
+		});
+
+	</script>
+
+	<script type="text/javascript">
+
+	require(["require", "js", "jQ17", "dom", "uMask", "dialog"], function(require){
+		require("uMask").init();
+
+		var
+			_ = require("dialog")
+			;
+
+		var $evtOnEl = $(".d-wrap01"),
+			$group = $('<div class="d-wrap01-group"></div>').appendTo($evtOnEl)
+			;
+
+		function just2NewGourp(){
+			$group = $('<div class="d-wrap01-group"></div>').appendTo($evtOnEl);
+		}
+
+		function Test(info, fn, b){
+			var $El;
+			$El = $(
+				'<div class="boxAio-item">' +
+				'<input type="button" value="invoke">' +
+				'<span class="dib" title="' + info + '">' + info + '</span>' +
+				'</div>'
+			)
+				.appendTo($group)
+				.on("click", "input", function(){
+					fn();
+					return false;
+				})
+			;
+
+			b && fn();
+
+		}
+
+		dances.dialog.init(function(){
+			Test("快速上手", function(){
+				dances.dialog("hello word!").open();
+			});
+
+			Test("内置 alert", function(){
+				dances.dialog("hello word!", {
+					sType: "alert",
+
+					fConfirm: function(){
+						alert("准备关闭")
+					}
+				}).open();
+			});
+
+			Test("内置 confirm", function(){
+				dances.dialog("hello word!", {
+					sType: "confirm",
+
+					fConfirm: function(){
+						alert("准备关闭")
+					}
+				}).open();
+			});
+
+			Test("内置 prompt", function(){
+				dances.dialog("hello word!!", {
+					sType: "prompt",
+
+					fConfirm: function(){
+						alert("准备关闭")
+					}
+				}).open();
+			});
+
+			just2NewGourp();
+
+			Test("配置标题", function(){
+				dances.dialog("hello word!", {
+					title: "标题被设置了"
+				}).open();
+			});
+			Test("配置尺寸", function(){
+				dances.dialog({
+					title  : "set Size",
+					content: "350*120<br>主体内容的尺寸<br>并非对话框的尺寸",
+					nWidth : 350,
+					nHeight: 120
+				}).open();
+			});
+			Test("跟随模式", function(){
+				dances.dialog("很困很冷,想睡觉", {
+					title  : "follow eye",
+					bFollow: true
+				}).open();
+			});
+			Test("sClass 自定义主体内容挂钩", function(){
+				dances.dialog({
+					content: '今天是里程碑的一天<br>.dances-dialog-ui => .d-inTime',
+					title  : "使用firebug 查看挂钩",
+					sClass : "d-inTime"
+				}).open();
+			});
+			Test("sClassRoot 自定义root挂钩", function(){
+				dances.dialog({
+					content   : "一定要记得查看 音乐方案",
+					title     : "使用firebug 查看挂钩",
+					sClassRoot: "d-type00005"
+				}).open();
+			});
+			Test("禁用 esc", function(){
+				dances.dialog({
+					content: '今天是里程碑的一天<br>.dances-dialog-ui => .d-inTime',
+					title  : "明天睡到中午起床",
+					bEsc   : false
+				}).open();
+			});
+
+			just2NewGourp();
+
+			Test("注册关闭事件", function(){
+				dances.dialog({
+					title  : "注册关闭事件",
+					content: '.fClose' +
+							 '<br> 任何形式对话框都可以注册',
+
+					fClose: function(){
+						if(!confirm("是否关闭")){
+							return false;
+						}
+					}
+				}).open();
+			});
+			Test("注册确认事件", function(){
+				dances.dialog({
+					title  : "注册确认事件",
+					content: '.fConfirm' +
+							 '<br> 内置 对话框都支持此事件',
+
+					sType: "confirm",
+
+					fConfirm: function(){
+						alert("ok\n 你确认了,后果自负");
+					}
+				}).open();
+			});
+			Test("注册取消事件", function(){
+				dances.dialog({
+					title  : "注册取消事件",
+					content: '.fCancel' +
+							 '<br> 内置 confirm prompt 支持此事件',
+
+					sType: "confirm",
+
+					fCancel: function(){
+						if(!confirm("是否关闭")){
+							return false;
+						}
+					}
+				}).open();
+			});
+			Test("prompt 获取输入内容", function(){
+				dances.dialog({
+					title: "请输入你的姓名",
+
+					sType: "prompt",
+
+					fConfirm: function(){
+						alert("你好 " + this.value);
+					}
+				}).open();
+			});
+
+			just2NewGourp();
+
+			Test("关闭遮罩", function(){
+				dances.dialog("没有遮罩,很爽", {
+					title: "爽",
+					bMask: false
+				}).open();
+			});
+
+			Test("配置遮罩", function(){
+				dances.dialog("很困很冷,想睡觉", {
+					title    : "Mask personality",
+					oMaskConf: {
+						nOpacity: 0.5,
+						sColor  : "#FAF0B5"
+					}
+				}).open();
+			});
+
+			Test("配置遮罩", function(){
+				dances.dialog("很困很冷,想睡觉", {
+					title    : "Mask personality",
+					oMaskConf: {
+						nOpacity: 0.5,
+						sColor  : "#FAF0B5"
+					}
+				}).open();
+			});
+
+			Test("点击遮罩关闭对话", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						inst = dances.dialog("很困很冷,想睡觉", {
+							title: "Mask personality",
+
+							oMaskConf: {
+								nOpacity: 0.5,
+								sColor  : "#FAF0B5",
+
+								eClick: function(){
+									inst.remove();
+								}
+							}
+						});
+					}
+
+					inst.open();
+				}
+			})());
+
+			just2NewGourp();
+
+			Test("配置模板", function(){
+				var inst;
+
+				dances.addCss(
+					'.dsDialog-tie-self{' +
+					'padding:0 50px 0 0;' +
+					'*zoom:1;' +
+					'position:relative;' +
+					'}' +
+
+					'.dsDialog-close-self{' +
+					'background-position: right top;font-size: 12px;line-height: 16px;padding: 0 20px 0 0;width: auto;' +
+					'}' +
+
+					'.dsDialog-close-self:hover{' +
+					'background-position: right bottom' +
+					'}'
+				);
+
+				inst = dances.dialog("很困很冷,想睡觉", {
+					title  : "配置模板",
+					content: '若配置 hdr,务必保留 .dsDialog-tie .dsDialog-close 挂钩' +
+							 '',
+
+					oTemplate: {
+						hdr: '<h2 class="dsDialog-tie dsDialog-tie-self dib pr20"></h2> ' +
+							 '<a href="#" class="dsDialog-close-self dsDialog-close" title="关闭">关闭</a>',
+
+						ftr: '<p class="tar pr5">---devan5</p>'
+					}
+
+				}).open();
+			});
+
+			Test(".index()", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+							title: ".index()"
+
+
+						});
+					}
+
+					inst.open().index(5);
+				}
+			})());
+
+			just2NewGourp();
+
+			Test("自动 zIndex 调整..", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+							title  : "x1",
+							content: "x1"
+						});
+					}
+
+					inst.open();
+				}
+			})());
+
+			Test("自动 zIndex 调整..", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+							title  : "x2",
+							content: "x2"
+						});
+					}
+
+					inst.open();
+				}
+			})());
+
+			just2NewGourp();
+
+			Test("动画..", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						window.inst = inst = dances.dialog("很困很冷,想睡觉.........", {
+							title  : "x2",
+							content: "x2",
+
+							oAnimate: {
+								beforeShow: function(el){
+									$log(el)
+								},
+
+								show: function(el, dataUI, bsDate){
+									$log(arguments);
+									$(el).fadeIn(750);
+								},
+
+								hide: function(el){
+									$(el).fadeOut(150);
+								}
+							}
+						});
+					}
+
+					inst.open();
+				}
+			})());
+
+			just2NewGourp();
+			Test("实战 2013.01.23", (function(){
+				var inst;
+				return function(){
+					if(!inst){
+						window.inst = inst = dances.dialog("很困很冷,想睡觉.........", {
+							title  : "x2",
+							content: "x2"
+						});
+					}
+
+					inst.open();
+				}
+			})());
+
+		});
+
+	});
+
+	0 && dances
+
+		.waits("../../%23dances.UI%23/dances.uMask/dances.uMask.js", function(){
+
+		})
+
+		// Main
+		.waits("dances.dialog.js", function(){
+			var $evtOnEl = $(".d-wrap01"),
+				$group = $('<div class="d-wrap01-group"></div>').appendTo($evtOnEl)
+				;
+
+			function just2NewGourp(){
+				$group = $('<div class="d-wrap01-group"></div>').appendTo($evtOnEl);
+			}
+
+			function Test(info, fn, b){
+				var $El;
+				$El = $(
+					'<div class="boxAio-item">' +
+					'<input type="button" value="invoke">' +
+					'<span class="dib" title="' + info + '">' + info + '</span>' +
+					'</div>'
+				)
+					.appendTo($group)
+					.on("click", "input", function(){
+						fn();
+						return false;
+					})
+				;
+
+				b && fn();
+
+			}
+
+			dances.dialog.init(function(){
+				Test("快速上手", function(){
+					dances.dialog("hello word!").open();
+				});
+
+				Test("内置 alert", function(){
+					dances.dialog("hello word!", {
+						sType: "alert",
+
+						fConfirm: function(){
+							alert("准备关闭")
+						}
+					}).open();
+				});
+
+				Test("内置 confirm", function(){
+					dances.dialog("hello word!", {
+						sType: "confirm",
+
+						fConfirm: function(){
+							alert("准备关闭")
+						}
+					}).open();
+				});
+
+				Test("内置 prompt", function(){
+					dances.dialog("hello word!!", {
+						sType: "prompt",
+
+						fConfirm: function(){
+							alert("准备关闭")
+						}
+					}).open();
+				});
+
+				just2NewGourp();
+
+				Test("配置标题", function(){
+					dances.dialog("hello word!", {
+						title: "标题被设置了"
+					}).open();
+				});
+				Test("配置尺寸", function(){
+					dances.dialog({
+						title  : "set Size",
+						content: "350*120<br>主体内容的尺寸<br>并非对话框的尺寸",
+						nWidth : 350,
+						nHeight: 120
+					}).open();
+				});
+				Test("跟随模式", function(){
+					dances.dialog("很困很冷,想睡觉", {
+						title  : "follow eye",
+						bFollow: true
+					}).open();
+				});
+				Test("sClass 自定义主体内容挂钩", function(){
+					dances.dialog({
+						content: '今天是里程碑的一天<br>.dances-dialog-ui => .d-inTime',
+						title  : "使用firebug 查看挂钩",
+						sClass : "d-inTime"
+					}).open();
+				});
+				Test("sClassRoot 自定义root挂钩", function(){
+					dances.dialog({
+						content   : "一定要记得查看 音乐方案",
+						title     : "使用firebug 查看挂钩",
+						sClassRoot: "d-type00005"
+					}).open();
+				});
+				Test("禁用 esc", function(){
+					dances.dialog({
+						content: '今天是里程碑的一天<br>.dances-dialog-ui => .d-inTime',
+						title  : "明天睡到中午起床",
+						bEsc   : false
+					}).open();
+				});
+
+				just2NewGourp();
+
+				Test("注册关闭事件", function(){
+					dances.dialog({
+						title  : "注册关闭事件",
+						content: '.fClose' +
+								 '<br> 任何形式对话框都可以注册',
+
+						fClose: function(){
+							if(!confirm("是否关闭")){
+								return false;
+							}
+						}
+					}).open();
+				});
+				Test("注册确认事件", function(){
+					dances.dialog({
+						title  : "注册确认事件",
+						content: '.fConfirm' +
+								 '<br> 内置 对话框都支持此事件',
+
+						sType: "confirm",
+
+						fConfirm: function(){
+							alert("ok\n 你确认了,后果自负");
+						}
+					}).open();
+				});
+				Test("注册取消事件", function(){
+					dances.dialog({
+						title  : "注册取消事件",
+						content: '.fCancel' +
+								 '<br> 内置 confirm prompt 支持此事件',
+
+						sType: "confirm",
+
+						fCancel: function(){
+							if(!confirm("是否关闭")){
+								return false;
+							}
+						}
+					}).open();
+				});
+				Test("prompt 获取输入内容", function(){
+					dances.dialog({
+						title: "请输入你的姓名",
+
+						sType: "prompt",
+
+						fConfirm: function(){
+							alert("你好 " + this.value);
+						}
+					}).open();
+				});
+
+				just2NewGourp();
+
+				Test("关闭遮罩", function(){
+					dances.dialog("没有遮罩,很爽", {
+						title: "爽",
+						bMask: false
+					}).open();
+				});
+
+				Test("配置遮罩", function(){
+					dances.dialog("很困很冷,想睡觉", {
+						title    : "Mask personality",
+						oMaskConf: {
+							nOpacity: 0.5,
+							sColor  : "#FAF0B5"
+						}
+					}).open();
+				});
+
+				Test("配置遮罩", function(){
+					dances.dialog("很困很冷,想睡觉", {
+						title    : "Mask personality",
+						oMaskConf: {
+							nOpacity: 0.5,
+							sColor  : "#FAF0B5"
+						}
+					}).open();
+				});
+
+				Test("点击遮罩关闭对话", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							inst = dances.dialog("很困很冷,想睡觉", {
+								title: "Mask personality",
+
+								oMaskConf: {
+									nOpacity: 0.5,
+									sColor  : "#FAF0B5",
+
+									eClick: function(){
+										inst.remove();
+									}
+								}
+							});
+						}
+
+						inst.open();
+					}
+				})());
+
+				just2NewGourp();
+
+				Test("配置模板", function(){
+					var inst;
+
+					dances.addCss(
+						'.dsDialog-tie-self{' +
+						'padding:0 50px 0 0;' +
+						'*zoom:1;' +
+						'position:relative;' +
+						'}' +
+
+						'.dsDialog-close-self{' +
+						'background-position: right top;font-size: 12px;line-height: 16px;padding: 0 20px 0 0;width: auto;' +
+						'}' +
+
+						'.dsDialog-close-self:hover{' +
+						'background-position: right bottom' +
+						'}'
+					);
+
+					inst = dances.dialog("很困很冷,想睡觉", {
+						title  : "配置模板",
+						content: '若配置 hdr,务必保留 .dsDialog-tie .dsDialog-close 挂钩' +
+								 '',
+
+						oTemplate: {
+							hdr: '<h2 class="dsDialog-tie dsDialog-tie-self dib pr20"></h2> ' +
+								 '<a href="#" class="dsDialog-close-self dsDialog-close" title="关闭">关闭</a>',
+
+							ftr: '<p class="tar pr5">---devan5</p>'
+						}
+
+					}).open();
+				});
+
+				Test(".index()", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+								title: ".index()"
+
+
+							});
+						}
+
+						inst.open().index(5);
+					}
+				})());
+
+				just2NewGourp();
+
+				Test("自动 zIndex 调整..", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+								title  : "x1",
+								content: "x1"
+							});
+						}
+
+						inst.open();
+					}
+				})());
+
+				Test("自动 zIndex 调整..", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							window.inst = inst = dances.dialog("很困很冷,想睡觉", {
+								title  : "x2",
+								content: "x2"
+							});
+						}
+
+						inst.open();
+					}
+				})());
+
+				just2NewGourp();
+
+				Test("动画..", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							window.inst = inst = dances.dialog("很困很冷,想睡觉.........", {
+								title  : "x2",
+								content: "x2",
+
+								oAnimate: {
+									beforeShow: function(el){
+										$log(el)
+									},
+
+									show: function(el, dataUI, bsDate){
+										$log(arguments);
+										$(el).fadeIn(750);
+									},
+
+									hide: function(el){
+										$(el).fadeOut(150);
+									}
+								}
+							});
+						}
+
+						inst.open();
+					}
+				})());
+
+				just2NewGourp();
+				Test("实战 2013.01.23", (function(){
+					var inst;
+					return function(){
+						if(!inst){
+							window.inst = inst = dances.dialog("很困很冷,想睡觉.........", {
+								title  : "x2",
+								content: "x2"
+							});
+						}
+
+						inst.open();
+					}
+				})());
+
+			});
+		})
+
+	;
+
+
+	</script>
+
+	<script type="text/javascript">
+		dynWrite('<select name="" id=""> <option value="">..........</option> </select><select name="" id=""> <option value="">..........</option> </select><br>',50);
+	</script>
+</body>
+</html>

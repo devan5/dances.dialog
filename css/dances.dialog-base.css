@@ -1,0 +1,76 @@
+﻿.dsDialog {
+	/* layout */
+	top: 50%;
+	left: 50%;
+	z-index: 550;
+	position: absolute;
+
+	/* Typesetting */
+	background-color: #FFF;
+	font: 12px/2 Arial;
+
+	/* hack */
+	*zoom:1;
+}
+
+.dsDialog-inner {
+	position: relative;
+	z-index: 10;
+	*zoom:1;
+}
+
+.dsDialog-follow{
+	position: fixed;
+	_position: absolute;
+	_bottom: auto;
+	_top: expression(eval(document.documentElement.scrollTop + (document.documentElement.clientHeight || document.body.clientHeight)/2)-parseInt(this.offsetHeight / 2));
+}
+
+.dsDialog-hdr {
+	position: relative;
+	*position: static;
+	_position: relative;
+	_zoom:1;
+}
+
+.dsDialog-close {
+	position: absolute;
+	top: 50%;
+	*top: 1.5em;
+	_top: 50%;
+	right: 0.5em;
+}
+
+.dsDialog-fixSelectCover {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	width: 100%;
+	border: none;
+}
+
+/*_______
+	Scope: fix ie6 遮罩 <select/>
+	Date: 2012.11.26
+	End
+*/
+
+.dsDialog-shadow {
+	width: 100%;
+	height: 100%;
+	*zoom: 1;
+	position: absolute;
+	z-index: 5;
+	top: 5px;
+	left: 5px;
+}
+
+:root .dsDialog-shadow{
+	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType = 0, StartColorStr = '#00000000', EndColorStr = '#00000000');
+}
+/*_______
+	Scope: -ie9 阴影
+	Date: 2012.12.16
+	End
+*/
