@@ -7,7 +7,7 @@ with dances.plugins
 
 	firstDate: 2012.11.26
 
-	lastDate: 2013.05.10
+	lastDate: 2013.05.18
 
 	require: [
 		"jQuery",
@@ -18,19 +18,19 @@ with dances.plugins
 	],
 
 	effect: [
-		+.提供 自定义宽与高 并 自动居中布局模式
-		+.提供 自定义标题(html代码) 与 内容(html代码)
-		+.提供 多种窗体类型选择  alert warn confirm prompt
+		+ 提供 自定义宽与高 并 自动居中布局模式
+		+ 提供 自定义标题(html代码) 与 内容(html代码)
+		+ 提供 多种窗体类型选择  alert warn confirm prompt
 
-		+.提供 交互事件 fConfirm - 点击确认按钮
-		+.提供 交互事件 fCancel - 点击关闭按钮或者取消
-		+.提供 交互事件 fClose - 关闭了窗体
+		+ 提供 交互事件 fConfirm - 点击确认按钮
+		+ 提供 交互事件 fCancel - 点击关闭按钮或者取消
+		+ 提供 交互事件 fClose - 关闭了窗体
 
-		+.可扩展 button
+		+ 可扩展 button
 
-		+.可配置 dialog 是否自动跟随
+		+ 可配置 dialog 是否自动跟随
 
-		+.可配置 遮罩
+		+ 可配置 遮罩
 		+ {effects}
 	];
 
@@ -59,8 +59,10 @@ with dances.plugins
 
 		"v2.0": [
 			+ 适配 dances.amd
-			+ // TODO 重写 继承部分代码
-			+ // TODO 归类/新增 API
+			+ 重写 继承部分代码
+			+ // TODO 整理 API, 更符合使用环境
+			+ // TODO 增加 在实例, 增加 conf 动态可以改变 配置
+			+ // TODO 自动加载 css
 			+ // TODO 修正 ie6 当标题长于10个字的时候, 显示错乱
 		]
 	}
@@ -68,95 +70,147 @@ with dances.plugins
 _______*/
 
 /*_______
-	syntax:
-		// 配置 .dialog类
-		dances.dialog.conf({
-			// 配置jQuery 版本
-			baseJquery: window.jQuery || window._$1_72
-		});
+# syntax
 
-		// 初始化
-		// 必须手动初始化
-		// TODO 修正: 如果增加一个可选配置参数, 如果指定此参数, 则必须手动初始化. 反之, 则自动初始化
-		dances.dialog.init([loadedFunction]);
+## 配置 klass
+	dances.dialog.conf(opt);
 
-		inst = dances.dialog(opts);
+	Object.keys(opt);
+==>
+	[
+		"baseJquery",
+ 		"bAutoInit"
+	]
 
-		opts = {
-			// 标题
-			title   	: "提示",
+### baseJquery
+配置jQuery 版本
 
-			// 会话内容
-			content		: "",
+### bAutoInit
+是否自动初始化
+默认为 true
+只能使用一次
 
-			// 可选挂钩
-			sClass		: "dances-dialog-ui"
+## 初始化 klass
+	dances.dialog.init([loadedFunction]);
 
-			// 可选会话框类型
-			// "alert" || "confirm" || "prompt"
-			sType		: null,
+没有指定, 一般都是自动初始化
 
-			// 会话框跟随
-			bFollow 	: false,
+_______*/
 
-			// 会话框 inner 尺寸
-			nWidth   	: 520,
-			nHeight  	: 430,
+/*_______
+# syntax
 
-			// 当开启 sType 点击"确认"按钮事件
-			// 返回值可以控制事件传播
-			fConfirm 	: function(){
-				// this is current inst
+## 创建实例
+	dances.dialog(opts);
+ 	dances.dialog(msg, opts);
+ 	dances.dialog(msg);
+
+## 配置
+
+	Object.keys(opts);
+==>
+	[
+		"title",
+		"content",
+
+		"sClass",
+		"sClassRoot",
+		"sType",
+		"bFollow",
+		"nHeight",
+
+		"fConfirm",
+		"fCancel",
+		"fClose",
+
+		"nZ",
+		"bMask",
+		"boMaskConf",
+
+		bEsc,
+
+		"oTemplate",
+		"animate",
+		"oAnimate"
+	]
+
+###
+
+	opts = {
+		// 标题
+		title   	: "提示",
+
+		// 会话内容
+		content		: "",
+
+		// 可选挂钩
+		sClass		: "dances-dialog-ui"
+
+		// 可选会话框类型
+		// "alert" || "confirm" || "prompt"
+		sType		: null,
+
+		// 会话框跟随
+		bFollow 	: false,
+
+		// 会话框 inner 尺寸
+		nWidth   	: 520,
+		nHeight  	: 430,
+
+		// 当开启 sType 点击"确认"按钮事件
+		// 返回值可以控制事件传播
+		fConfirm 	: function(){
+			// this is current inst
+		},
+
+		// 当开启 sType 点击"取消"按钮事件
+		// 返回值可以控制事件传播
+		fCancel		: function(){
+			// this is current inst
+		},
+
+		// 当关闭会话框事件
+		// 返回 false 可以阻止操作
+		fClose		: function(){
+			// this is current inst
+		},
+
+		// z-index
+		nZ			: "1055",
+
+		// 开启遮罩
+		bMask   	: true,
+
+		// 配置参数结构与 dances.uMask API 保存一直
+		oMaskConf	: { },
+
+		// 配置模板:
+		oTemplate: {
+			// 头部信息
+			// 务必保留 .dsDialog-tie .dsDialog-close 挂钩, 否则导致不可预期的错误
+			hdr:
+				'<h2 class="dsDialog-tie"></h2> ' +
+				'<a href="#" class="dsDialog-close" title="关闭"></a>',
+
+			// 底部信息
+			ftr:
+				'somethingHTML in ftr'
+		},
+
+		animate: "",
+
+		oAnimate: {
+			show: function(el){
+				// el is equivalent to inst.$dialog
+				// this is inst
 			},
 
-			// 当开启 sType 点击"取消"按钮事件
-			// 返回值可以控制事件传播
-			fCancel		: function(){
-				// this is current inst
-			},
-
-			// 当关闭会话框事件
-			// 返回 false 可以阻止操作
-			fClose		: function(){
-				// this is current inst
-			},
-
-			// z-index
-			nZ			: "1055",
-
-			// 开启遮罩
-			bMask   	: true,
-
-			// 配置参数结构与 dances.uMask API 保存一直
-			oMaskConf	: { },
-
-			// 配置模板:
-			oTemplate: {
-				// 头部信息
-				// 务必保留 .dsDialog-tie .dsDialog-close 挂钩, 否则导致不可预期的错误
-				hdr:
-					'<h2 class="dsDialog-tie"></h2> ' +
-					'<a href="#" class="dsDialog-close" title="关闭"></a>',
-
-				// 底部信息
-				ftr:
-					'somethingHTML in ftr'
-			},
-
-			sAnimate: "",
-
-			oAnimate: {
-				show: function(el){
-			 		// el is equivalent to inst.$dialog
-					// this is inst
-				},
-
-				hide: function(el){
-					// el is equivalent to inst.$dialog
-					// this is inst
-				}
+			hide: function(el){
+				// el is equivalent to inst.$dialog
+				// this is inst
 			}
-		})
+		}
+	})
 
 _______*/
 
@@ -217,7 +271,6 @@ _______*/
 		// 设置读取 对话框-标题 html
 		.title()
 
-		// TODO 可重写配置 实例参数
 		.conf({
 			name: val
 		})
@@ -225,77 +278,33 @@ _______*/
 		// solution B
 		.conf(name, val);
 
-		// 添加button
+		// 添加 button
 		// TODO 待完善需求逻辑
-		.title()
+		.button()
 
 _______*/
 
-// 命名扩展
-if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
-	window.dances = {};
-
-	dances.$eval = function(){
-		return eval.apply(null, arguments);
-	};
-
-	// $log
-	window.$log = (function(){
-		var
-			$log,
-			logRepo = {}
-		;
-
-		$log = Boolean;
-
-		if(window.console && window.console.log){
-			$log = console.log;
-
-			try{
-				$log("_____" + (new Date).toString() + "_____");
-
-			}catch(e){
-				$log = null;
-			}
-
-			$log || ($log = function(){ console.log.apply(console, arguments); }) && $log("_____" + (new Date).toString() + "_____");
-
-			window.$$log || (window.$$log = function(msg, method){
-				method = method || "log";
-
-				logRepo[method] || (logRepo[method] = console[method] ? console[method] : console.log);
-
-				"function" === typeof console[method] ?
-					logRepo[method].call(console, msg) :
-					logRepo[method](msg)
-				;
-
-			});
-
-		}
-
-		return $log;
-	})();
-}
-
 (function(exports, undefined){
+	"use strict";
+
 	var
 		dances = window.dances,
 		Dialog,
 		dialog,
 
+
 		instArr,
 		fClean,
 
 		AioZ,
-		AioAnimate,
+		animateRepo,
 
-		oConf,
+		DialogConf = {},
 		fConf,
 		fInit,
+		bInit = false,
 		fValidArgs,
 
-		requireType,
 		defaultConf,
 
 		htmlBtn,
@@ -309,30 +318,58 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 		$ = window.jQuery
 	;
 
-	if("object" !== typeof dances && "function" !== typeof dances){
-		throw ("expect dances.core");
-	}
+	var
+		create = Object.create || (function(){
 
-	if("object" !== typeof exports && "function" !== typeof exports){
-		exports = {};
-	}
+			var Foo = function(){ };
+
+			return function(){
+
+				if(arguments.length > 1){
+					throw new Error('Object.create implementation only accepts the first parameter.');
+				}
+
+				var proto = arguments[0],
+					type = typeof proto
+					;
+
+				if(!proto || ("object" !== type && "function" !== type)){
+					throw new TypeError('TypeError: ' + proto + ' is not an object or null');
+				}
+
+				Foo.prototype = proto;
+
+				return new Foo();
+			}
+		})(),
+
+		uc = function(fn){
+			return function(){
+				return Function.prototype.call.apply(fn, arguments);
+			}
+		},
+
+		slice = uc(Array.prototype.slice)
+
+	;
 
 	fConf = function(conf){
-		if(!conf && "object" === typeof conf){
-			conf = {};
-		}
 
-		fValidArgs(conf, {
-			baseJquery: "function"
+		fValidArgs(conf || {}, {
+			// requireType
+			baseJquery: "function",
+			bAutoInit: "boolean"
 		}, {
-			baseJquery: window.jQuery
+			// defaultValue
+			baseJquery: window.jQuery,
+			bAutoInit : true
 		});
 
-		oConf = conf;
+		DialogConf = conf;
 
 		$ = conf.baseJquery;
 
-		arguments.callee = function(){
+		fConf = function(){
 			return this;
 		};
 
@@ -342,7 +379,7 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 	fInit = function(foo){
 		var linkEl;
 
-		dances.addCss(
+		linkEl = dances.addCss(
 			".dsDialog{" +
 				"top:50%;" +
 				"left:50%;" +
@@ -402,62 +439,12 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				"filter:progid:DXImageTransform.Microsoft.Gradient(GradientType = 0,StartColorStr = '#00000000',EndColorStr = '#00000000')" +
 			"}"
 		);
-
-		// 配置 类
-		oConf = oConf || {};
-
-		requireType = {
-			title  : "string,element",
-			content: "string,element",
-			sType  : "string",
-			bFollow: "boolean",
-			bMask  : "boolean",
-
-			sClass    : "string",
-			sClassRoot: "string",
-
-			bEsc: "boolean",
-
-			nWidth : "number",
-			nHeight: "number",
-			nZ     : "number",
-
-			fConfirm: "function",
-			fCancel : "function",
-			fClose  : "function",
-
-			oMaskConf: "object",
-			oTemplate: "object",
-
-			sAnimate: "string",
-			oAnimate: "object"
-		};
-
-		defaultConf = {
-			title  : "提示",
-			bFollow: false,
-			bMask  : true,
-			nZ     : 1055,
-			sClass : "dances-dialog-ui",
-
-			bEsc: true,
-
-			oMaskConf: {
-				// z-index
-				z      : 1050,
-
-				// 透明度,取值范围:0~1
-				opacity: 0.5
-			},
-
-			oTemplate: { }
-		};
-
+/*
 		defaultConf.fConfirm =
 			defaultConf.fCancel =
 				defaultConf.fClose = function(){
 				}
-		;
+		;*/
 
 		// 按钮类型
 		htmlBtn = {
@@ -677,10 +664,8 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				delItem,
 				getMaxItem,
 
-				isInst,
-
 				fzIndex
-				;
+			;
 
 			hasItem = function(inst){
 				var base = instOpenArr,
@@ -749,10 +734,6 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 			};
 
-			isInst = function(inst){
-				return (inst && Dialog === inst.constructor);
-			};
-
 			// extend ESC
 			$(document)
 				.on("keyup", function(e){
@@ -766,14 +747,14 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 			return {
 				withOpen: function(inst){
-					if(isInst(inst) && !hasItem(inst)){
+					if(!hasItem(inst)){
 						addItem(inst);
 					}
 
 				},
 
 				withClose: function(inst){
-					if(isInst(inst) && hasItem(inst)){
+					if(hasItem(inst)){
 						delItem(inst);
 					}
 
@@ -787,7 +768,7 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 		})();
 
-		AioAnimate = {
+		animateRepo = {
 			def : {
 				show: function(el){
 					$(el).show();
@@ -857,7 +838,9 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 			}
 		};
 
-		arguments.callee = function(foo){
+		bInit = true;
+
+		fInit = function(foo){
 			"function" === typeof foo && foo();
 			return this;
 		};
@@ -892,83 +875,122 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 		return conf;
 	};
 
-	Dialog = function(){
-		this.conf = Array.prototype.slice.call(arguments, 0);
-	};
-
-	Dialog.prototype = {
-		constructor: Dialog,
+	Dialog = {
 
 		init: function(foo){
-			var conf,
+			var
+				args = slice(arguments),
+
+				conf,
 				_content,
 
 				$html,
-
-				$dialogInner,
 
 				$dialogCon,
 
 				$dialogFtr,
 
 				_this = this
-				;
+			;
 
-			// -------  配置/验证参数
-			while(true){
-				conf = this.conf.pop();
+			conf = args.pop();
 
-				if(conf && "object" === typeof conf){
-					_content = this.conf.pop() || "";
-					break;
-				}
+			if("[object Object]" === Object.prototype.toString.call(conf) && !conf.nodeType){
+				_content = args.pop();
 
-				if(0 === this.conf.length){
-					_content = "string" === typeof conf ? conf : {};
-					conf = {};
-
-					break;
-				}
+			}else{
+				_content = conf;
+				conf = {};
 			}
 
 			// 验证参数
-			this.conf = fValidArgs(conf, requireType, defaultConf);
+			this.conf = fValidArgs(conf, {
+				// require Type
+
+				title  : "string,element",
+				content: "string,element",
+				sType  : "string",
+				bFollow: "boolean",
+				bMask  : "boolean",
+
+				sClass    : "string",
+				sClassRoot: "string",
+
+				bEsc: "boolean",
+
+				nWidth : "number",
+				nHeight: "number",
+				nZ     : "number",
+
+				fConfirm: "function",
+				fCancel : "function",
+				fClose  : "function",
+
+				oMaskConf: "object",
+				oTemplate: "object",
+
+				animate: "string",
+				oAnimate: "object"
+
+			}, {
+				// default Value
+
+				title    : "提示",
+				bFollow  : false,
+				bMask    : true,
+				nZ       : 1055,
+				sClass   : "dances-dialog-ui",
+				bEsc     : true,
+
+				oMaskConf: {
+					// z-index
+					nZ      : 1050,
+
+					// 透明度,取值范围:0~1
+					nOpacity: 0.5
+				},
+
+				oTemplate: {}
+			});
 
 			// test
-			// this.conf.sAnimate = "cool";
+			// this.conf.animate = "cool";
+
+// 创造 html 实体_______
 
 			$html = $(
-				'<div class="dsDialog"> ' +
-					'<div class="dsDialog-inner"> ' +
-					'<div class="dsDialog-hdr">' +
-						(conf.oTemplate.hdr ?
-							conf.oTemplate.hdr :
-							'<h2 class="dsDialog-tie"></h2> ' +
-							'<a href="#" class="dsDialog-close" title="关闭"></a>'
-						) +
-					' </div> ' +
-					'<div class="dsDialog-con tac"></div>' +
-						(conf.oTemplate.ftr ?
-							conf.oTemplate.ftr :
-							'<div class="dsDialog-ftr"></div>'
-						) +
-						' <!--[if lt IE 7]>' +
-							'<iframe class="dsDialog-fixSelectCover" frameborder="0">$nbsp;</iframe>' +
-						'<![endif]-->' +
+				'<div class="dsDialog">' +
+					'<div class="dsDialog-inner">' +
+						'<div class="dsDialog-hdr">' +
+							(conf.oTemplate.hdr ?
+								conf.oTemplate.hdr :
+								'<h2 class="dsDialog-tie"></h2>' +
+								'<a href="#" class="dsDialog-close" title="关闭"></a>'
+							) +
+						'</div> ' +
+						'<div class="dsDialog-con tac"></div>' +
+							(conf.oTemplate.ftr ?
+								conf.oTemplate.ftr :
+								'<div class="dsDialog-ftr"></div>'
+							) +
+							' <!--[if lt IE 7]>' +
+								'<iframe class="dsDialog-fixSelectCover" frameborder="0">$nbsp;</iframe>' +
+							'<![endif]-->' +
 					'</div>' +
-					' <!--[if lt IE 9]>' +
-						'<div class="dsDialog-shadow"></div>' +
-					'<![endif]-->' +
-					' </div>'
+					'<!--[if lt IE 9]><div class="dsDialog-shadow"></div><![endif]-->' +
+				'</div>'
 			);
 
-			// -------  创造 html实体
 			this.$dialog =
 				// 隐藏节点,避免性能损失
-				$html.hide()
+				$html
+					.hide()
 					.appendTo("body")
 					.css("z-index", conf.nZ)
 			;
+
+			// 设置: 标题 和 内容
+			$html.find(".dsDialog-tie").append(conf.title);
 
 			// sClassRoot
 			conf.sClassRoot && $html.addClass(conf.sClassRoot);
@@ -976,22 +998,23 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 			// follow
 			conf.bFollow && $html.addClass("dsDialog-follow");
 
-			// 保存 dom/jquery实例引用
+			// 保存 dom/jquery 实例引用
 			this.dialogEl = $html[0];
+			this.$dialogInner = $html.find(".dsDialog-inner");
 
-			this.$dialogInner
-				= $dialogInner
-				= $html.find(".dsDialog-inner")
-			;
-
-			this.$dialogCon
-				= $dialogCon
-				= $html.find(".dsDialog-con").addClass(conf.sClass)
+			this.$dialogCon =
+				$dialogCon =
+					$html.find(".dsDialog-con").addClass(conf.sClass)
 			;
 
 			this.$dialogFtr =
 				$dialogFtr =
 					$html.find(".dsDialog-ftr")
+			;
+
+			"prompt" === conf.sType ?
+				$dialogCon.prepend(_content || conf.content || "") :
+				$dialogCon.append(_content || conf.content || "")
 			;
 
 			// 依据类型 , 创建 btn结构
@@ -1029,6 +1052,8 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				})(conf.buttons);
 			}
 
+// 绑定事件_______
+
 			// evt
 			// 绑定关闭
 			$html
@@ -1046,10 +1071,14 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				case "prompt":
 					$html
 						.on("click", ".dsDialog-btn-confirm", function(){
-							false !== conf.fConfirm.call(_this, _this.value) && _this.close(true);
+							if("function" !== typeof conf.fConfirm || false !== conf.fConfirm.call(_this, _this.value)){
+								_this.close(true);
+							}
 						})
 						.on("click", ".dsDialog-btn-cancel", function(){
-							false !== conf.fCancel.call(_this, _this.value) && _this.close(false);
+							if("function" !== typeof conf.fCancel || false !== conf.fCancel.call(_this, _this.value)){
+								_this.close(false);
+							}
 						})
 					;
 					break;
@@ -1067,14 +1096,6 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				$dialogCon.append('<br><input type="text" class="dsDialog-inputText mt5">');
 			}
 
-			// 设置: 标题 和 内容
-			$html.find(".dsDialog-tie").append(conf.title);
-
-			"prompt" === conf.sType?
-				$dialogCon.prepend(_content || conf.content || ""):
-				$dialogCon.append(_content || conf.content || "")
-			;
-
 			// 嗅探最大宽度
 			conf.nWidth && (conf.nWidth = conf.nWidth < viewMaxWidth ? conf.nWidth : viewMaxWidth);
 			fSize(this);
@@ -1084,18 +1105,20 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 			ltIE9 && (this.$shadow = _this.$dialog.find(".dsDialog-shadow"));
 
+			// 初始化 dances.uMask
 			conf.bMask && (this.mask = dances.uMask(conf.oMaskConf));
 
 			// save esc
 			this.bEsc = conf.bEsc;
 
-			// save sAnimate
-			this.sAnimate = conf.sAnimate;
+			// save animate
+			var animate;
+			this.animate = animate = conf.animate;
 
-			if(AioAnimate.hasOwnProperty(this.sAnimate)){
-				this.showAnimate = AioAnimate[this.sAnimate].show;
-				this.hideAnimate = AioAnimate[this.sAnimate].hide;
-				"function" === typeof AioAnimate[this.sAnimate].beforeShow && (this.evtForeShow = AioAnimate[this.sAnimate].beforeShow);
+			if(animateRepo.hasOwnProperty(animate)){
+				this.showAnimate = animateRepo[animate].show;
+				this.hideAnimate = animateRepo[animate].hide;
+				"function" === typeof animateRepo[animate].beforeShow && (this.evtForeShow = animateRepo[animate].beforeShow);
 			}
 
 			if(conf.oAnimate){
@@ -1117,22 +1140,22 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 			this.bInit = true;
 
+			"function" === typeof foo && foo.call(this, this);
+
 			// 重载实例 init 方法
 			this.init = function(foo){
-				"function" === typeof foo && foo();
+				"function" === typeof foo && foo.call(this, this);
 				return this;
 			};
 
-			"function" === typeof foo && foo();
-
 			return this;
-
 		},
 
 		open: function(msg){
 			!this.bInit && this.init();
 
-			var conf = this.conf,
+			var
+				conf = this.conf,
 				_width,
 				_height,
 				nTop,
@@ -1141,7 +1164,9 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				_this = this,
 
 				dataUI,
-				dataInterface
+				dataInterface,
+
+				$dialog = this.$dialog
 			;
 
 			if(!this.bShow){
@@ -1150,16 +1175,17 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				msg && this.content(msg);
 
 				this.mask && this.mask.show();
-				AioZ.withOpen(this);
 				this.$dialog.show();
-				dataUI = {
-					width: this.$dialog.width(),
-					height: this.$dialog.height(),
-					top: this.$dialog.css("top"),
-					left: this.$dialog.css("left")
-				};
+				AioZ.withOpen(this);
 
-				"function" === typeof  this.evtForeShow && (dataInterface = this.evtForeShow.call(this, this.$dialog[0]));
+				this.showAnimate && (dataUI = {
+					width : $dialog.width(),
+					height: $dialog.height(),
+					top   : $dialog.css("top"),
+					left  : $dialog.css("left")
+				});
+
+				"function" === typeof  this.evtForeShow && (dataInterface = this.evtForeShow.call(this, $dialog[0]));
 
 				// 非 bFollow 模式 定义高度
 				if(!conf.bFollow){
@@ -1207,10 +1233,10 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 				// 居中化
 				fCen(this);
 
-				this.showAnimate && this.$dialog.hide();
+				this.showAnimate && $dialog.hide();
 
 				// 动画函数
-				this.showAnimate && this.showAnimate.call(this, this.$dialog, dataUI, dataInterface);
+				this.showAnimate && this.showAnimate.call(this, $dialog, dataUI, dataInterface);
 
 				this.bShow = true;
 			}
@@ -1229,7 +1255,7 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 			var conf = this.conf;
 
 			if(this.bShow){
-				if(false !== conf.fClose.call(this, flag)){
+				if("function" !== typeof conf.fClose || false !== conf.fClose.call(this, flag)){
 					AioZ.withClose(this);
 					this.mask && this.mask.hide();
 
@@ -1242,6 +1268,7 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 					this.bShow = false;
 				}
 			}
+
 			return this;
 		},
 
@@ -1251,30 +1278,37 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 		content: function(info){
 
+			// setter
 			if(info){
 				if("function" === typeof info){
 					this.$dialogCon.html(info(this.$dialogCon.html()));
 				}else{
 					this.$dialogCon.empty().append(info);
 				}
+
 				return this;
 
+			// getter
 			}else{
+
 				return this.$dialogCon.html();
 			}
 
 		},
 
-		title: function(){
-			var arg = arguments[0];
-			if(arg){
-				if("function" === typeof arg){
-					this.$dialog.find(".dsDialog-tie").html(arg(this.$dialogCon.html()));
+		title: function(data){
+
+			// setter
+			if(data){
+				if("function" === typeof data){
+					this.$dialog.find(".dsDialog-tie").html(data(this.$dialogCon.html()));
+
 				}else{
-					this.$dialog.find(".dsDialog-tie").empty().append(arg);
+					this.$dialog.find(".dsDialog-tie").empty().append(data);
 				}
 				return this;
 
+			// getter
 			}else{
 				return this.$dialog.find(".dsDialog-tie").html();
 			}
@@ -1287,7 +1321,7 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 				this.dialogEl.style.zIndex = n;
 
-				// TODO dances.mask 提供 返回实例本体
+				// TODO dances.uMask.js 提供 返回实例本体的方法
 				this.mask && (this.mask.maskEl.style.zIndex = n - 5);
 
 				AioZ.withIndex(n);
@@ -1362,10 +1396,19 @@ if ("function" !== typeof window.dances &&  "object" !== typeof window.dances){
 
 			return fCen(fSize(this));
 		}
+
 	};
 
-	dialog = function(content, options){
-		return new Dialog(content, options);
+	dialog = function(){
+		var iDialog = create(Dialog);
+
+		// checkAuto Init klass
+		!bInit || false !== DialogConf.bAutoInit && fInit();
+
+		// checkAuto Init inst
+		arguments[1] && false !== arguments[1].bAutoInit && iDialog.init.apply(iDialog, arguments);
+
+		return iDialog;
 	};
 
 	// 公开 初始化方法
