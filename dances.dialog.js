@@ -60,8 +60,9 @@ with dances.plugins
 		"v2.0": [
 			+ 适配 dances.amd
 			+ 重写 继承部分代码
-			+ // TODO 整理 API, 更符合使用环境
+			+ // 整理 API, 更符合使用环境
 			+ // TODO 增加 在实例, 增加 conf 动态可以改变 配置
+			+ // TODO dances.ss 引入
 			+ // TODO 自动加载 css
 			+ // TODO 修正 ie6 当标题长于10个字的时候, 显示错乱
 		]
@@ -83,7 +84,7 @@ _______*/
 	]
 
 ### baseJquery
-配置jQuery 版本
+配置 jQuery 版本
 
 ### bAutoInit
 是否自动初始化
@@ -99,6 +100,7 @@ _______*/
 
 /*_______
 # syntax
+配置, 和实例化的配置
 
 ## 创建实例
 	dances.dialog(opts);
@@ -110,13 +112,17 @@ _______*/
 	Object.keys(opts);
 ==>
 	[
+		"bAutoInit",
+
 		"title",
 		"content",
+
 
 		"sClass",
 		"sClassRoot",
 		"sType",
 		"bFollow",
+		"nWidth",
 		"nHeight",
 
 		"fConfirm",
@@ -127,92 +133,165 @@ _______*/
 		"bMask",
 		"boMaskConf",
 
-		bEsc,
+		"bEsc",
 
 		"oTemplate",
 		"animate",
 		"oAnimate"
 	]
 
-###
+### bAutoInit
+(可选)自动初始化
+默认: true
 
-	opts = {
-		// 标题
-		title   	: "提示",
+### title
+(可选)配置标题
+可以接受的值: 字符, domEl, jQueryEl
 
-		// 会话内容
-		content		: "",
+### content
+(可选) ,配置内容
+可以接受的值: 字符, domEl, jQueryEl
 
-		// 可选挂钩
-		sClass		: "dances-dialog-ui"
+### sClass
+(可选), 添加指定 className
+默认为 "dances-dialog-ui"
 
-		// 可选会话框类型
-		// "alert" || "confirm" || "prompt"
-		sType		: null,
+### sClassRoot
+(可选)
+向 dialog 最外层, 添加指定 className
 
-		// 会话框跟随
-		bFollow 	: false,
+### sType
+(可选), 指定 dialog 类型
+"alert" || "confirm" || "prompt"
 
-		// 会话框 inner 尺寸
-		nWidth   	: 520,
-		nHeight  	: 430,
+### bFollow
+(可选), 指定会话框跟随视口
+默认为 false
 
-		// 当开启 sType 点击"确认"按钮事件
-		// 返回值可以控制事件传播
-		fConfirm 	: function(){
-			// this is current inst
+### nWidth/nHeight
+(可选), 指定 内容区的 尺寸
+请注意: 是内容区域
+
+### fConfirm
+确认事件
+当类型为 "alert" || "confirm" || "prompt", 用户点击 [确定]按钮, 触发此事件
+
+监听函数中, this 指向 本实例
+
+### fCancel
+取消事件
+当类型为 "confirm" || "prompt", 用户点击 [取消]按钮, 触发此事件
+
+监听函数中, this 指向 本实例
+
+### fClose
+关闭事件
+确认按钮, 取消按钮, 和关闭按钮 都能触发此事件
+
+接受一个形参, 形参值的代表的意义:
+	0 由关闭按钮传递
+	true 由确认按钮传递
+	false 由取消按钮传递
+
+返回 false 可以阻止操作
+
+### nZ
+指定 z-index
+
+### bMask
+指定开启 遮罩
+默认为 true
+
+### boMaskConf
+配置遮罩对象
+具体内容请查看, dances.uMask API
+
+### bEsc
+按 sec 是否取消此层
+默认为 true
+TODO 测试, 多层显示的时候, esc 关闭的顺序
+
+### oTemplate
+配置模板
+
+demo:
+
+	oTemplate: {
+		// 头部信息
+		// 务必保留 .dsDialog-tie .dsDialog-close 挂钩, 否则导致不可预期的错误
+		hdr:
+			'<h2 class="dsDialog-tie"></h2> ' +
+			'<a href="#" class="dsDialog-close" title="关闭"></a>',
+
+		// 底部信息
+		ftr:
+			'somethingHTML in ftr'
+	}
+
+### animate
+指定使用内置动画
+目前仅有 "cool" - -!
+
+### oAnimate
+扩展动画
+
+	oAnimate: {
+		show: function(el){
+			// el is equivalent to inst.$dialog
+			// this is inst
 		},
 
-		// 当开启 sType 点击"取消"按钮事件
-		// 返回值可以控制事件传播
-		fCancel		: function(){
-			// this is current inst
-		},
-
-		// 当关闭会话框事件
-		// 返回 false 可以阻止操作
-		fClose		: function(){
-			// this is current inst
-		},
-
-		// z-index
-		nZ			: "1055",
-
-		// 开启遮罩
-		bMask   	: true,
-
-		// 配置参数结构与 dances.uMask API 保存一直
-		oMaskConf	: { },
-
-		// 配置模板:
-		oTemplate: {
-			// 头部信息
-			// 务必保留 .dsDialog-tie .dsDialog-close 挂钩, 否则导致不可预期的错误
-			hdr:
-				'<h2 class="dsDialog-tie"></h2> ' +
-				'<a href="#" class="dsDialog-close" title="关闭"></a>',
-
-			// 底部信息
-			ftr:
-				'somethingHTML in ftr'
-		},
-
-		animate: "",
-
-		oAnimate: {
-			show: function(el){
-				// el is equivalent to inst.$dialog
-				// this is inst
-			},
-
-			hide: function(el){
-				// el is equivalent to inst.$dialog
-				// this is inst
-			}
+		hide: function(el){
+			// el is equivalent to inst.$dialog
+			// this is inst
 		}
-	})
+	}
 
 _______*/
+
+/*_______
+# syntax
+实例方法
+
+## init(fn)
+初始化实例(可自动)
+除非配置 bAutoInit: false, 一般无需手动 初始化
+(可选), 接受一个函数作为参数, 有点象异步编程.. 其实非也, 此函数内部 this 指向 本实例
+
+## open(msg)
+显示对话框
+
+(可选), 接受一个 msg, 可修改内容
+可以接受的值: 字符, domEl, jQueryEl
+
+## close
+隐藏对话框
+
+## remove
+清除实例
+
+## content
+设置或读取 对话框-主体内容 html
+
+## title
+设置或者读取 对话框-标题 html
+
+## conf
+### syntax
+修改配置.
+
+可修改的配置:
+
+
+	inst.conf(opts)
+	inst.conf("name", value)
+
+
+## button()
+// TODO 待完善需求逻辑
+
+_______*/
+
 
 /*_______
 	inst property:
@@ -249,40 +328,6 @@ _______*/
 
 _______*/
 
-/*_______
-	dialogInst method:
-
-		// 初始化实例
-		// .open() 可自动初始化
-		.init()
-
-		// 显示对话框
-		.open(msg)
-
-		// 隐藏对话框
-		.close()
-
-		// 清除实例
-		.remove()
-
-		// 设置读取 对话框-主体内容 html
-		.content()
-
-		// 设置读取 对话框-标题 html
-		.title()
-
-		.conf({
-			name: val
-		})
-
-		// solution B
-		.conf(name, val);
-
-		// 添加 button
-		// TODO 待完善需求逻辑
-		.button()
-
-_______*/
 
 (function(exports, undefined){
 	"use strict";
@@ -292,22 +337,20 @@ _______*/
 		Dialog,
 		dialog,
 
-
-		instArr,
+		dialogRepo,
 		fClean,
+		fCleanItem,
 
-		AioZ,
+		zAioHandle,
 		animateRepo,
+
+		confAioHandle,
 
 		DialogConf = {},
 		fConf,
 		fInit,
 		bInit = false,
 		fValidArgs,
-
-		defaultConf,
-
-		htmlBtn,
 
 		viewMaxWidth,
 		fCen,
@@ -353,6 +396,7 @@ _______*/
 
 	;
 
+	// 只能使用一次
 	fConf = function(conf){
 
 		fValidArgs(conf || {}, {
@@ -439,23 +483,6 @@ _______*/
 				"filter:progid:DXImageTransform.Microsoft.Gradient(GradientType = 0,StartColorStr = '#00000000',EndColorStr = '#00000000')" +
 			"}"
 		);
-/*
-		defaultConf.fConfirm =
-			defaultConf.fCancel =
-				defaultConf.fClose = function(){
-				}
-		;*/
-
-		// 按钮类型
-		htmlBtn = {
-			alert: '<input type="button" value="确认" class="dsDialog-btn dsDialog-btn-confirm">'
-		};
-
-		htmlBtn.prompt =
-			htmlBtn.confirm =
-				'<input type="button" value="确认" class="dsDialog-btn dsDialog-btn-confirm">' +
-				'<input type="button" value="取消" class="dsDialog-btn dsDialog-btn-cancel">'
-		;
 
 		// 获取视口大小
 		viewMaxWidth = (dances.getViewSize() && dances.getViewSize().width) || 1080;
@@ -528,7 +555,6 @@ _______*/
 				// gc
 				_$Tem = null;
 			}
-
 			if(ltIE7 && conf.nWidth){
 				nPadding = parseInt(dances.ss(inst.$dialogCon[0], "paddingRight"), 10) + parseInt(dances.ss(inst.$dialogCon[0], "paddingLeft"), 10);
 				nPadding = isNaN(nPadding) ? 0 : nPadding;
@@ -542,119 +568,85 @@ _______*/
 			return inst;
 		};
 
-		instArr = [];
+		dialogRepo = [];
 
 		// 清除实例
 		fClean = function(inst){
-			var pound = instArr,
-				num = pound.length,
+			var
+				arr = dialogRepo,
+				num = arr.length,
 
-				conf,
-				prop
-				;
+				bForce
+			;
 
-			if(inst && inst.constructor === Dialog){
+			// 指定清除 实例
+			if(Dialog.isPrototypeOf(inst)){
 
 				while(num--){
-					if(pound[num] === inst){
-						// 脱离应用池
-						pound.splice(num, 1);
+					if(arr[num] === inst){
+						arr.splice(num, 1);
+						fCleanItem(inst);
 						break;
 					}
 				}
 
-				// 解除事件绑定
-				inst.$dialog.off().remove();
+			// 全局清空
+			}else{
 
-				inst.mask && inst.mask.remove();
+				bForce = inst === true;
 
-				conf = inst.conf;
-
-				for(prop in inst){
-					if(inst.hasOwnProperty(prop)){
-						inst[prop] = null;
-					}
-				}
-
-				for(prop in conf){
-					if(conf.hasOwnProperty(prop)){
-						conf[prop] = null;
-					}
-				}
-
-				// 全局清空
-			}else if(true === inst){
 				while(num--){
 
-					inst = pound[num];
+					inst = arr[num];
 
-					// 脱离应用池
-					pound.splice(num, 1);
-
-					// 解除事件绑定
-					inst.$dialog.off().remove();
-
-					inst.mask && inst.mask.remove();
-
-					conf = inst.conf;
-
-					for(prop in inst){
-						if(inst.hasOwnProperty(prop)){
-							inst[prop] = null;
-						}
-					}
-
-					for(prop in conf){
-						if(conf.hasOwnProperty(prop)){
-							conf[prop] = null;
-						}
-					}
-				}
-
-				// 全局 非使用清空
-			}
-			if(undefined === inst){
-				while(num--){
-
-					inst = pound[num];
-
-					if(!inst.bShow){
+					// 是否强制删除
+					if(bForce || !inst.bShow){
 
 						// 脱离应用池
-						pound.splice(num, 1);
+						arr.splice(num, 1);
 
-						// 解除事件绑定
-						inst.$dialog.off().remove();
-
-						inst.mask && inst.mask.remove();
-
-						conf = inst.conf;
-
-						for(prop in inst){
-							if(inst.hasOwnProperty(prop)){
-								inst[prop] = null;
-							}
-						}
-
-						for(prop in conf){
-							if(conf.hasOwnProperty(prop)){
-								conf[prop] = null;
-							}
-						}
+						fCleanItem(inst);
 					}
 
 				}
 
 			}
 
-			inst =
-				conf = null
+			inst = null;
+
+		};
+
+		fCleanItem = function(inst){
+			var
+				conf,
+				prop
 			;
+
+			// 解除事件绑定
+			inst.$dialog.off().remove();
+
+			inst.mask && inst.mask.remove();
+
+			conf = inst.conf;
+
+			for(prop in inst){
+				if(inst.hasOwnProperty(prop)){
+					inst[prop] = null;
+				}
+			}
+
+			for(prop in conf){
+				if(conf.hasOwnProperty(prop)){
+					conf[prop] = null;
+				}
+			}
+
+			conf = null;
 
 		};
 
 		// 控制 showZ
-		AioZ = (function(){
+		zAioHandle = (function(){
 			var instOpenArr = [],
 
 				nMaxZ = 1055,
@@ -668,19 +660,18 @@ _______*/
 			;
 
 			hasItem = function(inst){
-				var base = instOpenArr,
-					num = base.length,
-					bHas = false
-					;
+				var
+					arr = instOpenArr,
+					num = arr.length
+				;
 
 				while(num--){
-					if(inst === base[num]){
-						bHas = true;
-						break;
+					if(inst === arr[num]){
+						return true;
 					}
 				}
 
-				return bHas;
+				return false;
 
 			};
 
@@ -694,12 +685,13 @@ _______*/
 			};
 
 			delItem = function(inst){
-				var base = instOpenArr,
-					num = base.length
-					;
+				var
+					arr = instOpenArr,
+					num = arr.length
+				;
 
 				while(num--){
-					if(inst === base[num]){
+					if(inst === arr[num]){
 						instOpenArr.splice(num, 1);
 						break;
 					}
@@ -713,7 +705,7 @@ _______*/
 
 					max = 0,
 					maxInst
-					;
+				;
 
 				while(num--){
 					itemMax = instOpenArr[num].dialogEl.style.zIndex;
@@ -746,17 +738,14 @@ _______*/
 			;
 
 			return {
+
 				withOpen: function(inst){
-					if(!hasItem(inst)){
-						addItem(inst);
-					}
+					!hasItem(inst) && addItem(inst);
 
 				},
 
 				withClose: function(inst){
-					if(hasItem(inst)){
-						delItem(inst);
-					}
+					hasItem(inst) && delItem(inst);
 
 				},
 
@@ -879,7 +868,7 @@ _______*/
 
 		init: function(foo){
 			var
-				args = slice(arguments),
+				args = slice(this.conf),
 
 				conf,
 				_content,
@@ -907,30 +896,32 @@ _______*/
 			this.conf = fValidArgs(conf, {
 				// require Type
 
-				title  : "string,element",
-				content: "string,element",
-				sType  : "string",
-				bFollow: "boolean",
-				bMask  : "boolean",
+				title     : "string,element",
+				content   : "string,element",
+				sType     : "string",
+
+				bFollow   : "boolean",
+				bMask     : "boolean",
+				oMaskConf : "object",
 
 				sClass    : "string",
 				sClassRoot: "string",
 
-				bEsc: "boolean",
+				bEsc      : "boolean",
 
-				nWidth : "number",
-				nHeight: "number",
-				nZ     : "number",
+				nWidth    : "number",
+				nHeight   : "number",
 
-				fConfirm: "function",
-				fCancel : "function",
-				fClose  : "function",
+				nZ        : "number",
 
-				oMaskConf: "object",
-				oTemplate: "object",
+				fConfirm  : "function",
+				fCancel   : "function",
+				fClose    : "function",
 
-				animate: "string",
-				oAnimate: "object"
+				oTemplate : "object",
+
+				animate   : "string",
+				oAnimate  : "object"
 
 			}, {
 				// default Value
@@ -953,10 +944,7 @@ _______*/
 				oTemplate: {}
 			});
 
-			// test
-			// this.conf.animate = "cool";
-
-// 创造 html 实体_______
+//	创造 html 实体_______
 
 			$html = $(
 				'<div class="dsDialog">' +
@@ -1012,13 +1000,18 @@ _______*/
 					$html.find(".dsDialog-ftr")
 			;
 
-			"prompt" === conf.sType ?
-				$dialogCon.prepend(_content || conf.content || "") :
-				$dialogCon.append(_content || conf.content || "")
-			;
+			// 置入 内容..
+			$dialogCon.append(_content || conf.content || "");
 
-			// 依据类型 , 创建 btn结构
-			conf.sType && $dialogFtr.append(htmlBtn[conf.sType] || "");
+			// 依据类型, 创建 btn结构
+			if(/alert|confirm|prompt/.test(conf.sType)){
+				$dialogFtr.append(
+					'<input type="button" value="确认" class="dsDialog-btn dsDialog-btn-confirm">' +
+					'<input type="button" value="取消" class="dsDialog-btn dsDialog-btn-cancel">'
+				);
+				this.setConf("sType", conf.sType);
+			}
+
 
 			// buttons
 			if(conf.buttons){
@@ -1052,7 +1045,7 @@ _______*/
 				})(conf.buttons);
 			}
 
-// 绑定事件_______
+//	绑定事件_______
 
 			// evt
 			// 绑定关闭
@@ -1063,38 +1056,6 @@ _______*/
 					return false;
 				})
 			;
-
-			// 依据 dialog 类型 , 绑定事件
-			switch(conf.sType){
-				case "alert":
-				case "confirm":
-				case "prompt":
-					$html
-						.on("click", ".dsDialog-btn-confirm", function(){
-							if("function" !== typeof conf.fConfirm || false !== conf.fConfirm.call(_this, _this.value)){
-								_this.close(true);
-							}
-						})
-						.on("click", ".dsDialog-btn-cancel", function(){
-							if("function" !== typeof conf.fCancel || false !== conf.fCancel.call(_this, _this.value)){
-								_this.close(false);
-							}
-						})
-					;
-					break;
-
-				default:
-					!conf.buttons && $dialogFtr.remove();
-			}
-
-			// prompt 窗体 绑定事件
-			if("prompt" === conf.sType){
-				$html.on("change blur", ".dsDialog-inputText", function(){
-					_this.value = this.value;
-				});
-
-				$dialogCon.append('<br><input type="text" class="dsDialog-inputText mt5">');
-			}
 
 			// 嗅探最大宽度
 			conf.nWidth && (conf.nWidth = conf.nWidth < viewMaxWidth ? conf.nWidth : viewMaxWidth);
@@ -1136,7 +1097,7 @@ _______*/
 			}
 
 			// push 实例池
-			instArr.push(this);
+			dialogRepo.push(this);
 
 			this.bInit = true;
 
@@ -1176,7 +1137,7 @@ _______*/
 
 				this.mask && this.mask.show();
 				this.$dialog.show();
-				AioZ.withOpen(this);
+				zAioHandle.withOpen(this);
 
 				this.showAnimate && (dataUI = {
 					width : $dialog.width(),
@@ -1247,16 +1208,16 @@ _______*/
 		close: function(flag){
 			/*
 			 flag
-			 0 由关闭按钮传递
-			 true 由确认按钮传递
-			 false 由取消按钮传递
+				0 由关闭按钮传递
+			 	true 由确认按钮传递
+			 	false 由取消按钮传递
 
 			 */
 			var conf = this.conf;
 
 			if(this.bShow){
 				if("function" !== typeof conf.fClose || false !== conf.fClose.call(this, flag)){
-					AioZ.withClose(this);
+					zAioHandle.withClose(this);
 					this.mask && this.mask.hide();
 
 					// 动画函数
@@ -1324,7 +1285,7 @@ _______*/
 				// TODO dances.uMask.js 提供 返回实例本体的方法
 				this.mask && (this.mask.maskEl.style.zIndex = n - 5);
 
-				AioZ.withIndex(n);
+				zAioHandle.withIndex(n);
 			}
 
 			return this;
@@ -1341,7 +1302,8 @@ _______*/
 				btnData,
 
 				$newItem
-				;
+			;
+
 			if(!data || "object" !== typeof data){
 				return _this;
 			}
@@ -1395,20 +1357,109 @@ _______*/
 			}
 
 			return fCen(fSize(this));
+		},
+
+		setConf: function(){
+			var
+				args = slice(arguments),
+				conf = args.shift()
+			;
+
+			if("[object Object]" === Object.prototype.toString.call(conf)){
+				for(var prop in conf){
+					if(conf.hasOwnProperty(prop) && confAioHandle.hasOwnProperty(prop)){
+						confAioHandle[prop].call(this, conf[prop]);
+					}
+				}
+
+			}else{
+				if(confAioHandle.hasOwnProperty(conf)){
+					confAioHandle[conf].call(this, args.shift());
+				}
+
+			}
+
+			return this;
 		}
 
 	};
 
 	dialog = function(){
-		var iDialog = create(Dialog);
+		var
+			iDialog = create(Dialog),
+			conf = arguments[arguments.length - 1]
+		;
 
 		// checkAuto Init klass
 		!bInit || false !== DialogConf.bAutoInit && fInit();
 
+		// 保存"粗配置", 因为可以手动初始化
+		iDialog.conf = arguments;
+
 		// checkAuto Init inst
-		arguments[1] && false !== arguments[1].bAutoInit && iDialog.init.apply(iDialog, arguments);
+		conf && false !== conf.bAutoInit && iDialog.init();
 
 		return iDialog;
+	};
+
+	confAioHandle = {
+		sType: function(type){
+			var
+				$el = this.$dialogFtr,
+				conf = this.conf,
+
+				_this = this
+			;
+
+			type = type.toLowerCase();
+
+			this.$dialog
+				.off("click", ".dsDialog-btn-confirm")
+				.off("click", ".dsDialog-btn-cancel")
+				.on("change blur", ".dsDialog-inputText")
+			;
+
+			if(/alert|confirm|prompt/.test(type)){
+				this.$dialog
+					.on("click", ".dsDialog-btn-confirm", function(){
+						if("function" !== typeof conf.fConfirm || false !== conf.fConfirm.call(_this, _this.value)){
+							_this.close(true);
+						}
+					})
+					.on("click", ".dsDialog-btn-cancel", function(){
+						if("function" !== typeof conf.fCancel || false !== conf.fCancel.call(_this, _this.value)){
+							_this.close(false);
+						}
+					})
+				;
+
+				$el.find(".dsDialog-btn").show();
+				"alert" === type && $el.find(".dsDialog-btn-confirm").hide();
+
+				this.$dialogFtr.show();
+
+			}else{
+
+				$el.find(".dsDialog-btn").hide();
+				!conf.buttons && this.$dialogFtr.hide();
+
+			}
+
+			if("prompt" === type){
+				this.$dialog.on("change blur", ".dsDialog-inputText", function(){
+					_this.value = this.value;
+				});
+
+				this.$dialogCon.append(
+					'<input type="text" class="dsDialog-inputText mt5">'
+				);
+
+				// TODO 设置状态标志
+			}else{
+
+			}
+
+		}
 	};
 
 	// 公开 初始化方法
